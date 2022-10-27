@@ -1,0 +1,6 @@
+<div>
+  <h1 class="font-bold text-4xl">Root</h1>
+  <p>Welcome!</p>
+    <%= "Welcome back, " + @user.name %>
+    <div><%= button_to "Sign OUT", destroy_user_session_path, method: :delete %></div>
+</div>
