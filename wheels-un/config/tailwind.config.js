@@ -9,6 +9,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      colors:{
+        'wheels': '#111114'
+      },
       fontFamily: {
         sans: ['Inter var', ...defaultTheme.fontFamily.sans],
       },

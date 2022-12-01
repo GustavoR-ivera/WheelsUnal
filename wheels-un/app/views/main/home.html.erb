@@ -1,6 +1,51 @@
 <div>
-  <h1 class="font-bold text-4xl">Root</h1>
-  <p>Welcome!</p>
-    <%= "Welcome back, " + @user.name %>
-    <div><%= button_to "Sign OUT", destroy_user_session_path, method: :delete %></div>
+  <h1 class="font-bold text-2xl">Dashboard</h1>
+  <p><%= "Welcome back, " + @user.name %></p>
+
+  <% if @tb.line_items.empty? %>
+    <div class="flex justify-between items-center pb-8">
+      <h1 class="mx-auto text-lg font-bold text-2xl">Trips available</h1>
+    </div>
+  <ul>
+    <% @available_trips.each do |trip| %>
+      <% if trip.status == 0 %>
+      <li class='flex mb-6'>
+        <%= image_tag(trip.get_image_url,
+                      class: 'object-contain h-48 shadow mr-6') %>
+        <div>
+          <h2 class="font-bold text-lg mb-3"><%= trip.route_origin %> to <%= trip.route_destination %></h2>
+          <p>
+            <%= trip.get_seats %> / 5 Seats <br>
+            Made by <%= trip.trip_creator.user.name %>
+          </p>
+          <%= button_to 'Join',
+                      line_items_path(trip_id: trip),
+                      form_class: 'inline',
+                      class: 'ml-4 rounded-lg py-1 px-2 text-white bg-sky-600',
+                      form: { data: { turbo_confirm: 'Join trip?' } }%>
+        </div>
+      </li>
+      <% end %>
+    <% end %>
+  </ul>
+  <% else %>
+    <h2>Currently part of a trip:</h2>
+    <%= render @tb %>
+  <% end %>
+
+  <% unless @user.vehicles.empty? %>
+  <div class="my-4 px-4 py-2 shadow-lg rounded-lg bg-blue-800 text-sky-100">
+        <%=  link_to "Create trip", new_trip_path, user: @user %>
+  </div>
+  <% end %>
+
+  <div class="my-4 px-4 py-2 shadow-lg rounded-lg bg-indigo-800 text-sky-100">
+    <%= link_to "Add vehicle", new_vehicle_path %>
+  </div>
+  <div class="my-4 px-4 py-2 shadow-lg rounded-lg bg-purple-700 text-sky-100">
+    <%= link_to "Statistics and history", history_path %>
+  </div>
+  <div class="my-4 px-4 py-2 shadow-lg rounded-lg bg-red-700 text-red-300">
+    <%= button_to "Sign OUT", destroy_user_session_path, method: :delete%>
+  </div>
 </div>

@@ -75,3 +75,6 @@ group :test do
 end
 
 gem 'devise'
+gem 'mysql2'
+gem 'geocoder'
+gem 'google-maps'
