@@ -1,4 +1,7 @@
+from datetime import datetime
+
 from Data.PoolCursor import PoolCursor
+from Data.User import User
 from Data.UserDAO import UserDAO
 
 
@@ -48,9 +51,12 @@ class UserDAOImpl(UserDAO):
         try:
             with PoolCursor() as cursor:
                 query = f"insert into test_users (user_name, password, user_status, country, " \
-                        f"dni_type, dni_number) " \
+                        f"dni_type, dni_number, email, last_login, phone_number, deleted, created_at," \
+                        f"updated_at, driving_license, rol) " \
                         f"values ('{user.user_name}','{user.password}',{user.user_status}," \
-                        f"'{user.country}', '{user.dni_type}', '{user.dni_number}' )"
+                        f"'{user.country}', '{user.dni_type}', '{user.dni_number}', '{user.email}', " \
+                        f"'{user.lastLogin}', '{user.phoneNumber}', {user.deleted}, '{user.created_at}'," \
+                        f"'{user.updated_at}', '{user.drivingLicence}', '{user.rol}' )"
                 cursor.execute(query)
                 print(f'inserted records: {cursor.rowcount}')
         except Exception as e:
@@ -93,11 +99,11 @@ class UserDAOImpl(UserDAO):
         except Exception as e:
             print(f'An exception has occurred: {e}')
 
-# # insert
-# user1 = User(None, "Michael Freedom", "GhyU8k#", 1, "Peru", "CC", "1100202366")
-# userDAO = UserDAOImpl()
-# #userDAO.insert(user1)
-# userDAO.select()
+# insert
+user1 = User(None, "Michael Jordan", "DFRG5677gh4", 0, "Belgica", "DNI", "gt5555-0", 'loquesea2@mail.com', datetime.now(),
+             '3223877590', 0, datetime.now(), datetime.now(), None, 'gt5555-0', 'generico')
+userDAO = UserDAOImpl()
+userDAO.insert(user1)
 
 # user1 = User(58, "Gerrad Lampard", "YTfr3", 1, "Inglaterra", "TI", "65665E14")
 # userDAO = UserDAOImpl()
@@ -126,3 +132,6 @@ class UserDAOImpl(UserDAO):
 # # select method
 # userDao = UserDAOImpl()
 # userDao.select()
+
+
+#print(datetime.now())
