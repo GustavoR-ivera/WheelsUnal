@@ -1,5 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
+
+from BusinessLogic.SignUp import SignUp
 from Data.User import User
 from Data.UserDAOImpl import UserDAOImpl
 from GUI.WindowHome import WindowHome
@@ -87,40 +89,30 @@ class WindowSignUp(tk.Tk):
 
 
     def signUp(self):
-        # empty fields validation
-        if (self.userNameEntry.get() == '' or self.passEntry.get() == '' or
-                self.dniTypeEntry.get() == '' or self.dniNumberEntry.get() == '' or
-                self.emailEntry.get() == ''):
-            messagebox.showwarning('warning', 'Please fill in all fields')
+        # create sign up object and capture data from the form fields
+        s = SignUp(self.userNameEntry.get(),self.passEntry.get(), self.countryEntry.get(),
+                   self.dniTypeEntry.get(),self.dniNumberEntry.get(), self.emailEntry.get(),
+                   self.phoneNumberEntry.get(), self.drivingLicenseEntry.get())
+
+        if s.register():
+            # informative message
+            messagebox.showinfo('informative', 'Successful registration')
+            # redirect to home window
+            self.destroy()
+            w = WindowHome()
+            w.mainloop()
         else:
-            try:
-                userDAO = UserDAOImpl()
-                user = User(user_name=self.userNameEntry.get(), password=self.passEntry.get(), country=self.countryEntry.get(),
-                            dni_type=self.dniTypeEntry.get(), dni_number=self.dniNumberEntry.get(), email=self.emailEntry.get(),
-                            phoneNumber= self.phoneNumberEntry.get(), drivingLicense=self.drivingLicenseEntry.get() )
-                userDAO.insert(user)
+            # delete text field content
+            self.emailEntry.delete(0, tk.END)
+            self.passEntry.delete(0, tk.END)
+            self.drivingLicenseEntry.delete(0, tk.END)
+            self.dniNumberEntry.delete(0, tk.END)
+            self.dniTypeEntry.delete(0, tk.END)
+            self.countryEntry.delete(0, tk.END)
+            self.userNameEntry.delete(0, tk.END)
+            self.phoneNumberEntry.delete(0, tk.END)
+            messagebox.showwarning('warning', 'Please fill in all fields')
 
-                # delete text field content
-                self.emailEntry.delete(0, tk.END)
-                self.passEntry.delete(0, tk.END)
-                self.drivingLicenseEntry.delete(0, tk.END)
-                self.dniNumberEntry.delete(0, tk.END)
-                self.dniTypeEntry.delete(0, tk.END)
-                self.countryEntry.delete(0, tk.END)
-                self.userNameEntry.delete(0, tk.END)
-                self.phoneNumberEntry.delete(0, tk.END)
-                #informative message
-                messagebox.showinfo('informative', 'Successful registration')
-                # redirect to home window
-                self.destroy()
-                w = WindowHome()
-                w.mainloop()
-
-            except Exception as e:
-                messagebox.showerror('error', f'An exception has ocurred {e}')
-
-    #     #messagebox.showerror('error', 'error')
-    #     #self.destroy()
 
 if __name__ == '__main__':
     w = WindowSignUp()

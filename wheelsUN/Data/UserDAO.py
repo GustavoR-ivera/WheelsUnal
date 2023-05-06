@@ -35,3 +35,8 @@ class UserDAO(ABC):
     def getUserByDni(self, dni_number):
         # return a user with the user dni specified
         pass
+
+    @abstractmethod
+    def loginValidation(self, email, password):
+        # return a user with the specified data
+        pass

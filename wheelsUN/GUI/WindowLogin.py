@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 
+from BusinessLogic.LogIn import LogIn
 from Data.PoolCursor import PoolCursor
 from GUI.WindowHome import WindowHome
 from GUI.WindowSignUp import WindowSignUp
@@ -48,24 +49,19 @@ class WindowLogin(tk.Tk):
         btnSignUp.grid(row=5, column=0, sticky='NSWE', columnspan=2, padx=90)
 
     def login(self):
-        try:
-            with PoolCursor() as cursor:
-                query = f"select * from test_users " \
-                        f"where email = '{self.emailEntry.get()}' and password = '{self.passEntry.get()}' "
-                cursor.execute(query)
-                record = cursor.fetchone()
-                if record:
-                    self.destroy()
-                    # if exist a record in the db then allows the access to the user
-                    w = WindowHome()
-                    w.mainloop()
-                else:
-                    messagebox.showinfo('error', 'No user was found')
-                    # delete text field content
-                    self.emailEntry.delete(0, tk.END)
-                    self.passEntry.delete(0, tk.END)
-        except Exception as e:
-            print(f'An exception has occurred: {e}')
+        l = LogIn(self.emailEntry.get(),self.passEntry.get())
+
+        if l.access():
+            # remove current window
+            self.destroy()
+            # if exist a record in the db then allows the access to the user
+            w = WindowHome()
+            w.mainloop()
+        else:
+            messagebox.showinfo('Warning', 'No user was found')
+            # delete text field content
+            self.emailEntry.delete(0, tk.END)
+            self.passEntry.delete(0, tk.END)
 
     def signUp(self):
         # remove current window login

@@ -7,6 +7,20 @@ from Data.UserDAO import UserDAO
 
 class UserDAOImpl(UserDAO):
 
+    def loginValidation(self, email, password):
+        try:
+            with PoolCursor() as cursor:
+                query = f"select * from test_users " \
+                        f"where email = '{email}' and password = '{password}' "
+                cursor.execute(query)
+                record = cursor.fetchone()
+                if record:
+                    return 1
+                else:
+                    return 0
+        except Exception as e:
+            print(f'An exception has occurred: {e}')
+
     def getUsersByStatus(self, status):
         #return a user list with the user status specified
         try:
