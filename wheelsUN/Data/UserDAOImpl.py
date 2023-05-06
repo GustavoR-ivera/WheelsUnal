@@ -56,7 +56,7 @@ class UserDAOImpl(UserDAO):
                         f"values ('{user.user_name}','{user.password}',{user.user_status}," \
                         f"'{user.country}', '{user.dni_type}', '{user.dni_number}', '{user.email}', " \
                         f"'{user.lastLogin}', '{user.phoneNumber}', {user.deleted}, '{user.created_at}'," \
-                        f"'{user.updated_at}', '{user.drivingLicence}', '{user.rol}' )"
+                        f"'{user.updated_at}', '{user.drivingLicense}', '{user.rol}' )"
                 cursor.execute(query)
                 print(f'inserted records: {cursor.rowcount}')
         except Exception as e:

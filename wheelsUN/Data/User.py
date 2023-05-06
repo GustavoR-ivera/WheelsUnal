@@ -1,11 +1,13 @@
+from datetime import datetime
+
 
 class User:
 
     #constructor
-    def __init__(self, user_id=None, user_name=None, password=None, user_status=None,
-                 country=None, dni_type=None, dni_number=None, email=None, lastLogin=None,
-                 phoneNumber=None, deleted=None, created_at=None, updated_at=None,
-                 deleted_at=None, drivingLicence=None, rol=None):
+    def __init__(self, user_id=None, user_name=None, password=None, user_status=1,
+                 country=None, dni_type=None, dni_number=None, email=None, lastLogin=datetime.now(),
+                 phoneNumber=None, deleted=0, created_at=datetime.now(), updated_at=datetime.now(),
+                 deleted_at=None, drivingLicense=None, rol='Generic'):
         # user attributes
         self._user_id = user_id
         self._user_name = user_name
@@ -25,7 +27,7 @@ class User:
         self._updated_at = updated_at
         self._deleted_at = deleted_at
         #driving licence's data
-        self._drivingLicence = drivingLicence
+        self._drivingLicense = drivingLicense
         self._rol = rol
 
     #getters setters
@@ -128,11 +130,11 @@ class User:
         self._deleted_at = deleted_at
 
     @property
-    def drivingLicence(self):
-        return self._drivingLicence
-    @drivingLicence.setter
-    def drivingLicence(self, drivingLicence):
-        self._drivingLicence = drivingLicence
+    def drivingLicense(self):
+        return self._drivingLicense
+    @drivingLicense.setter
+    def drivingLicence(self, drivingLicense):
+        self._drivingLicense = drivingLicense
 
     @property
     def rol(self):

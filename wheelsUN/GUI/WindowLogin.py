@@ -1,6 +1,9 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-import WindowSignUp
+
+from Data.PoolCursor import PoolCursor
+from GUI.WindowHome import WindowHome
+from GUI.WindowSignUp import WindowSignUp
 
 
 class WindowLogin(tk.Tk):
@@ -45,22 +48,33 @@ class WindowLogin(tk.Tk):
         btnSignUp.grid(row=5, column=0, sticky='NSWE', columnspan=2, padx=90)
 
     def login(self):
-        print(f'user: {self.emailEntry.get()}, password: {self.passEntry.get()}')
-        # delete text field content
-        self.emailEntry.delete(0, tk.END)
-        self.passEntry.delete(0, tk.END)
+        try:
+            with PoolCursor() as cursor:
+                query = f"select * from test_users " \
+                        f"where email = '{self.emailEntry.get()}' and password = '{self.passEntry.get()}' "
+                cursor.execute(query)
+                record = cursor.fetchone()
+                if record:
+                    self.destroy()
+                    # if exist a record in the db then allows the access to the user
+                    w = WindowHome()
+                    w.mainloop()
+                else:
+                    messagebox.showinfo('error', 'No user was found')
+                    # delete text field content
+                    self.emailEntry.delete(0, tk.END)
+                    self.passEntry.delete(0, tk.END)
+        except Exception as e:
+            print(f'An exception has occurred: {e}')
 
     def signUp(self):
-        #messagebox.showinfo('informative', 'informativo')
-        #messagebox.showerror('error', 'error')
-        #messagebox.showwarning('warning', 'warning')
-        #crear ventana de registro y mostrar
-        #w = WindowLogin('600x900', 'newWindow')
+        # remove current window login
+        self.destroy()
+        # show window sign up
         w = WindowSignUp()
         w.mainloop()
-        #self.destroy()
+
 
 if __name__ == '__main__':
-
     w = WindowLogin()
     w.mainloop()
