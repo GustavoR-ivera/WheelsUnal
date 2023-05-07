@@ -44,7 +44,9 @@ class UserDAOImpl(UserDAO):
                         f"WHERE user_id = '{user_id}' "
                 cursor.execute(query)
                 record = cursor.fetchone()
-                print(f'user: {record}')
+                user = User(record[0],record[1],record[2],record[3],record[4],record[5],record[6],record[7],
+                            record[8],record[9],record[10],record[11],record[12],record[13],record[14],record[15])
+                return user
         except Exception as e:
             print(f'An exception has occurred: {e}')
 
@@ -131,10 +133,10 @@ if __name__ == "__main__":
     # userDao = UserDAOImpl()
     # userDao.getUserByDni("98595-T")
 
-    # get user by id
-    #userDao = UserDAOImpl()
-    # check the user
-    #userDao.getUserById(12)
+    # #get user by id
+    # userDao = UserDAOImpl()
+    # #check the user
+    # print(type(userDao.getUserById(26)))
 
     # delete user
     # check the user
