@@ -3,6 +3,7 @@ from tkinter import ttk, messagebox
 
 from BusinessLogic.LogIn import LogIn
 from Data.PoolCursor import PoolCursor
+from Data.User import User
 from GUI.WindowHome import WindowHome
 from GUI.WindowSignUp import WindowSignUp
 
@@ -11,7 +12,13 @@ class WindowLogin(tk.Tk):
     def __init__(self):
         super().__init__()
         # basic config
-        self.geometry('370x300')
+        width_window = 370
+        heignt_window = 250
+        x = self.winfo_screenwidth() // 2 - width_window // 2
+        y = self.winfo_screenheight() // 2 - heignt_window // 2
+        position = str(width_window) + "x" + str(heignt_window) + "+" + str(x) + "+" + str(y - 50)
+        self.geometry(position)
+        #title
         self.title('Login')
         #self.iconbitmap(windowIcon)
         self.resizable(False,False)
@@ -50,12 +57,12 @@ class WindowLogin(tk.Tk):
 
     def login(self):
         l = LogIn(self.emailEntry.get(),self.passEntry.get())
-
-        if l.access():
+        value = l.access()
+        if type(value) == User:
             # remove current window
             self.destroy()
             # if exist a record in the db then allows the access to the user
-            w = WindowHome()
+            w = WindowHome(value)
             w.mainloop()
         else:
             messagebox.showinfo('Warning', 'No user was found')

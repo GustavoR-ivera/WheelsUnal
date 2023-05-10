@@ -16,7 +16,7 @@ class RideDAOImpl(RideDAO):
                         f"WHERE ride_available = '{status}' "
                 cursor.execute(query)
                 records = cursor.fetchall()
-                print(f'records: {cursor.rowcount}')
+                #print(f'records: {cursor.rowcount}')
                 #print(records)
                 for i in records:
                     r = Ride(int(i[0]),int(i[1]),i[2],i[3],i[4],i[5],i[6],int(i[7]),i[8],i[9],int(i[10]),int(i[11]),i[12])

@@ -1,7 +1,9 @@
+import sys
 import tkinter as tk
 from tkinter import ttk, messagebox
 
 from BusinessLogic.AvailableTrips import AvailableTrips
+from Data.User import User
 from Data.UserDAOImpl import UserDAOImpl
 from GUI.Card import Card
 
@@ -10,10 +12,18 @@ from GUI.Card import Card
 
 
 class WindowHome(tk.Tk):
-    def __init__(self):
+    def __init__(self, active_user:User):
         super().__init__()
+        # active_user
+        self._active_user = active_user
         # basic config
-        self.geometry('1000x600')
+        width_window = 1000
+        heignt_window = 600
+        x = self.winfo_screenwidth() // 2 - width_window // 2
+        y = self.winfo_screenheight() // 2 - heignt_window // 2
+        position = str(width_window) + "x" + str(heignt_window) + "+" + str(x) + "+" + str(y-50)
+        self.geometry(position)
+        # title
         self.title('Home Wheels UN')
         # self.iconbitmap(windowIcon)
         self.resizable(False, False)
@@ -24,7 +34,14 @@ class WindowHome(tk.Tk):
         self.columnconfigure(3, weight=10)
         self.columnconfigure(4, weight=10)
         self.columnconfigure(5, weight=10)
+        self.create_menu()
         self.components()
+
+
+    #get
+    @property
+    def active_user(self):
+        return self._active_user
 
     def components(self):
         #menu
@@ -48,16 +65,60 @@ class WindowHome(tk.Tk):
         self.frame.update_idletasks()
         canvas.config(scrollregion=canvas.bbox("all"))
 
+    def create_menu(self):
+        #create de principal menu
+        principal_menu = tk.Menu(self)
+        #=========================create submenu=========================
+        submenu_trips = tk.Menu(principal_menu, tearoff=False)
+        #add item to submenu
+        submenu_trips.add_command(label='Created trips')
+        submenu_trips.add_separator()
+        submenu_trips.add_command(label='Scheduled trips')
+        #=========================create submenu=========================
+        submenu_reports = tk.Menu(principal_menu, tearoff=False)
+        #add item to submenu
+        submenu_reports.add_command(label='History trips')
+        submenu_reports.add_separator()
+        submenu_reports.add_command(label='Generate report')
+        #=========================create submenu=========================
+        submenu_options = tk.Menu(principal_menu, tearoff=False)
+        # add item to submenu
+        submenu_options.add_command(label='Edit profile')
+        submenu_options.add_separator()
+        submenu_options.add_command(label='Exit', command=self.exit_app)
+        # add new seccions into the principal menu=========================
+        principal_menu.add_cascade(menu=submenu_trips, label='My trips')
+        principal_menu.add_cascade(menu=submenu_reports, label='Reports')
+        principal_menu.add_cascade(menu=submenu_options, label='Options')
+        self.config(menu=principal_menu)
+
+    def exit_app(self):
+        self.quit()
+        self.destroy()
+        sys.exit()
+
     def availableTrips(self):
         userDAO = UserDAOImpl()
         a = AvailableTrips()
         # available rides
         rides = a.fetchall()
-        for i in rides:
-            user = userDAO.getUserById(i._creator_id)
-            Card(self.frame, user.user_name, i._created_at, i._pickup_location, i._destination, i._departure_date,
-                 i._charge, i._space_available, 'nissan', 'Verde', 'FGR-443', user.phoneNumber, i._description)
+        for ride in rides:
+            user_ride_creator = userDAO.getUserById(ride._creator_id)
+            # compare if the ride creator is equal to the active_user
+            if user_ride_creator.user_id == self.active_user.user_id:
+                Card(self.frame, user_ride_creator.user_name, ride._created_at, ride._pickup_location,
+                     ride._destination, ride._departure_date, ride._charge,
+                     ride._space_available, 'nissan', 'Verde', 'FGR-443', user_ride_creator.phoneNumber,
+                     ride._description, True)
+            else:
+                Card(self.frame, user_ride_creator.user_name, ride._created_at, ride._pickup_location,
+                     ride._destination, ride._departure_date, ride._charge,
+                     ride._space_available, 'nissan', 'Verde', 'FGR-443', user_ride_creator.phoneNumber,
+                     ride._description, False)
 
 if __name__ == '__main__':
-    w = WindowHome()
+    u = User()
+    userdao = UserDAOImpl()
+    alexa = userdao.getUserById(25)
+    w = WindowHome(alexa)
     w.mainloop()

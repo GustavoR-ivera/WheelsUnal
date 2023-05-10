@@ -11,7 +11,13 @@ class WindowSignUp(tk.Tk):
     def __init__(self):
         super().__init__()
         # basic config
-        self.geometry('600x600')
+        width_window = 500
+        heignt_window = 500
+        x = self.winfo_screenwidth() // 2 - width_window // 2
+        y = self.winfo_screenheight() // 2 - heignt_window // 2
+        position = str(width_window) + "x" + str(heignt_window) + "+" + str(x) + "+" + str(y - 50)
+        self.geometry(position)
+        #title
         self.title('Sign Up')
         #self.iconbitmap(windowIcon)
         self.resizable(False,False)

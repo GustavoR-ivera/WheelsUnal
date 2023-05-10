@@ -14,8 +14,11 @@ class UserDAOImpl(UserDAO):
                         f"where email = '{email}' and password = '{password}' "
                 cursor.execute(query)
                 record = cursor.fetchone()
+                # if record variable is not empty then it creates an user object and then it returns it
                 if record:
-                    return 1
+                    user = self.getUserById(record[0])
+                    return user
+                # if record variable is empty then it returns 0/false
                 else:
                     return 0
         except Exception as e:

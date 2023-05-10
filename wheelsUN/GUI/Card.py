@@ -2,18 +2,21 @@
 import tkinter as tk
 #
 #from GUI.WindowHome import WindowHome
+from tkinter import ttk
 
 
 class Card(tk.LabelFrame):
     dynamicRow = 1
     def __init__(self, master=None, user_name=None, published=None, pickup_location=None,
                  destination=None, departure_date=None, charge=None, space_available=None, brand_vehicle = None,
-                 color_vehicle = None, plate_vehicle = None, phone_number=None,description = None, **kw ):
+                 color_vehicle = None, plate_vehicle = None, phone_number=None,description = None, match_user=None,**kw ):
         super().__init__(master, **kw)
         #card parameters
         Card.dynamicRow += 1
         #current row
         self.row = Card.dynamicRow
+        #match users (if the ride creator is equal to the active_user)
+        self._match_user = match_user
         self.user_name=user_name
         self.published=published
         self.pickup_location = pickup_location
@@ -88,8 +91,36 @@ class Card(tk.LabelFrame):
         # description
         description_label = tk.Label(seccion3, text=self.description)
         description_label.grid(row=0, column=0, sticky='NSWE', columnspan=2, padx=10)
+        # ====================seccion 4 creation========================
+        #compare if the ride creator is equal to the active_user
+        #if match user == true then there was a coincidence in the users
+        if(self._match_user):
+            seccion4 = tk.LabelFrame(self, text='acctions')
+            seccion4.columnconfigure(0, weight=1)
+            seccion4.columnconfigure(1, weight=1)
+            # location on home window
+            seccion4.grid(row=3, column=0, columnspan=2, sticky='NSWE')
+            # crete components for labelFrame
+            delete_btn = ttk.Button(seccion4, text='delete', command=self.delete_ride)
+            delete_btn.grid(row=0, column=0, sticky='NSWE', padx=20)
+            update_btn = ttk.Button(seccion4, text='update', command=self.update_ride)
+            update_btn.grid(row=0, column=1, sticky='NSWE', padx=20)
+        else:
+            seccion4 = tk.LabelFrame(self, text='acctions')
+            seccion4.columnconfigure(0, weight=1)
+            seccion4.columnconfigure(1, weight=1)
+            # location on home window
+            seccion4.grid(row=3, column=0, columnspan=2, sticky='NSWE')
+            # crete components for labelFrame
+            delete_btn = ttk.Button(seccion4, text='join', command=self.join_ride)
+            delete_btn.grid(row=0, column=0, columnspan=2, sticky='NSWE', padx=100)
 
-
+    def delete_ride(self):
+        pass
+    def update_ride(self):
+        pass
+    def join_ride(self):
+        pass
 # if __name__ == '__main__':
 #     w = WindowHome()
 #     c = Card(w, 'Fiu', '06/05/2023 14:37', 'Santa Rosita', 'Universidad Nal', '07/05/2023 10:00', '3500 COP', '5', 'nissan',

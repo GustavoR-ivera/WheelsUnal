@@ -5,4 +5,5 @@ class AvailableTrips:
 
     def fetchall(self):
         rideDAO = RideDAOImpl()
+        #returns all available rides
         return rideDAO.getRidesByStatus(1)
