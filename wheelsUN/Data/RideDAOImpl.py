@@ -34,7 +34,14 @@ class RideDAOImpl(RideDAO):
                         f"WHERE ride_id = '{ride_id}' "
                 cursor.execute(query)
                 record = cursor.fetchone()
-                print(f'ride: {record}')
+            # if record variable is not empty then it creates a ride object and then it returns it
+            if record:
+                ride = Ride(record[0],record[1],record[2],record[3],record[4],record[5],record[6],record[7],record[8],
+                            record[9],record[10],record[11],record[12])
+                return ride
+            # if record variable is empty then it returns 0/false
+            else:
+                return None
         except Exception as e:
             print(f'An exception has occurred: {e}')
 
@@ -49,7 +56,8 @@ class RideDAOImpl(RideDAO):
                         f"'{ride._departure_date}', '{ride._charge}', {ride._vehicle_id}, {ride._ride_available}," \
                         f"'{ride._description}' )"
                 cursor.execute(query)
-                print(f'inserted records: {cursor.rowcount}')
+                return cursor.rowcount
+                #print(f'inserted records: {cursor.rowcount}')
         except Exception as e:
             print(f'An exception has occurred: {e}')
 
@@ -72,12 +80,14 @@ class RideDAOImpl(RideDAO):
                         f"set ride_available = 0, deleted_at = '{datetime.now()}'  " \
                         f"where ride_id = {ride._ride_id} "
                 cursor.execute(query)
-                print(f'deleted records: {cursor.rowcount}')
+                # returns the affected rows
+                return cursor.rowcount
+                #print(f'deleted records: {cursor.rowcount}')
 
         except Exception as e:
             print(f'An exception has occurred: {e}')
 
-    def update(self, user):
+    def update(self, ride):
         pass
         # try:
         #     with PoolCursor() as cursor:
@@ -93,21 +103,25 @@ class RideDAOImpl(RideDAO):
 
 
 if __name__ == "__main__":
-    r = Ride(creator_id=25, pickup_location='Parque simon bolivar', destination='Martires', space_available=5,
-             departure_date='2023-05-08 07:00', charge='7500 COP', vehicle_id=1, description='llegar a tiempo')
-    r2 = Ride(creator_id=26, pickup_location='Florida', destination='San joaquin', space_available=3,
-             departure_date='2023-05-09 07:00', charge='8500 COP', vehicle_id=1, description='recibo davi')
-    r3 = Ride(creator_id=25, pickup_location='Florencia', destination='San marcos', space_available=3,
-             departure_date='2023-05-10 07:00', charge='9500 COP', vehicle_id=1, description='recibo nequi')
-    r4 = Ride(creator_id=26, pickup_location='Afidro', destination='Bachue', space_available=3,
-             departure_date='2023-05-18 07:00', charge='2500 COP', vehicle_id=1, description='')
-    r5 = Ride(creator_id=25, pickup_location='Paris', destination='Bolivia', space_available=0,
-             departure_date='2023-05-19 07:00', charge='1500 COP', vehicle_id=1, description='')
-    rideDAO = RideDAOImpl()
-    rideDAO.insert(r)
-    rideDAO.insert(r2)
-    rideDAO.insert(r3)
-    rideDAO.insert(r4)
-    rideDAO.insert(r5)
+    pass
+    # r = Ride(creator_id=25, pickup_location='Parque simon bolivar', destination='Martires', space_available=5,
+    #          departure_date='2023-05-08 07:00', charge='7500 COP', vehicle_id=1, description='llegar a tiempo')
+    # r2 = Ride(creator_id=26, pickup_location='Florida', destination='San joaquin', space_available=3,
+    #          departure_date='2023-05-09 07:00', charge='8500 COP', vehicle_id=1, description='recibo davi')
+    # r3 = Ride(creator_id=25, pickup_location='Florencia', destination='San marcos', space_available=3,
+    #          departure_date='2023-05-10 07:00', charge='9500 COP', vehicle_id=1, description='recibo nequi')
+    # r4 = Ride(creator_id=26, pickup_location='Afidro', destination='Bachue', space_available=3,
+    #          departure_date='2023-05-18 07:00', charge='2500 COP', vehicle_id=1, description='')
+    # r5 = Ride(creator_id=25, pickup_location='Paris', destination='Bolivia', space_available=0,
+    #          departure_date='2023-05-19 07:00', charge='1500 COP', vehicle_id=1, description='')
+    # rideDAO = RideDAOImpl()
+    # rideDAO.insert(r)
+    # rideDAO.insert(r2)
+    # rideDAO.insert(r3)
+    # rideDAO.insert(r4)
+    # rideDAO.insert(r5)
     #return all rides with ride available = 1
     #print(type(rideDAO.getRidesByStatus(1)[0]._departure_date))
+    #
+    # r = RideDAOImpl()
+    # print(r.getRideById(88))

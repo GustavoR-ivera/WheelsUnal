@@ -6,9 +6,7 @@ from BusinessLogic.AvailableTrips import AvailableTrips
 from Data.User import User
 from Data.UserDAOImpl import UserDAOImpl
 from GUI.Card import Card
-
-
-
+from GUI.NewRide import NewRide
 
 
 class WindowHome(tk.Tk):
@@ -71,8 +69,9 @@ class WindowHome(tk.Tk):
         #=========================create submenu=========================
         submenu_trips = tk.Menu(principal_menu, tearoff=False)
         #add item to submenu
-        submenu_trips.add_command(label='Created trips')
+        submenu_trips.add_command(label='Create trip', command=self.newRide)
         submenu_trips.add_separator()
+        submenu_trips.add_command(label='Created trips')
         submenu_trips.add_command(label='Scheduled trips')
         #=========================create submenu=========================
         submenu_reports = tk.Menu(principal_menu, tearoff=False)
@@ -96,6 +95,11 @@ class WindowHome(tk.Tk):
         self.quit()
         self.destroy()
         sys.exit()
+
+    def newRide(self):
+        #self.quit()
+        n = NewRide(self.active_user)
+        n.mainloop()
 
     def availableTrips(self):
         userDAO = UserDAOImpl()

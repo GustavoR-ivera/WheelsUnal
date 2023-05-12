@@ -47,9 +47,14 @@ class UserDAOImpl(UserDAO):
                         f"WHERE user_id = '{user_id}' "
                 cursor.execute(query)
                 record = cursor.fetchone()
-                user = User(record[0],record[1],record[2],record[3],record[4],record[5],record[6],record[7],
-                            record[8],record[9],record[10],record[11],record[12],record[13],record[14],record[15])
-                return user
+                if record:
+                    # if a user exist wiht the specified id then it creates the user and return it
+                    user = User(record[0],record[1],record[2],record[3],record[4],record[5],record[6],record[7],
+                                record[8],record[9],record[10],record[11],record[12],record[13],record[14],record[15])
+                    return user
+                else:
+                    #if not then return none
+                    return None
         except Exception as e:
             print(f'An exception has occurred: {e}')
 
@@ -120,7 +125,7 @@ class UserDAOImpl(UserDAO):
 
 
 if __name__ == "__main__":
-    pass
+    #pass
     # insert
     #user1 = User(None, "Michael Jordan", "DFRG5677gh4", 0, "Belgica", "DNI", "gt5555-0", 'loquesea2@mail.com', datetime.now(),
     #             '3223877590', 0, datetime.now(), datetime.now(), None, 'gt5555-0', 'generico')
@@ -137,9 +142,9 @@ if __name__ == "__main__":
     # userDao.getUserByDni("98595-T")
 
     # #get user by id
-    # userDao = UserDAOImpl()
-    # #check the user
-    # print(type(userDao.getUserById(26)))
+    userDao = UserDAOImpl()
+    #check the user
+    print(userDao.getUserById(88))
 
     # delete user
     # check the user
