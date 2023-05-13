@@ -13,7 +13,7 @@ class VehicleDAOImpl(VehicleDAO):
         try:
             with PoolCursor() as cursor:
                 query = f"SELECT * " \
-                        f"FROM vehicle " \
+                        f"FROM vehicles " \
                         f"WHERE vehicle_id = '{vehicle_id}' "
                 cursor.execute(query)
                 record = cursor.fetchone()
@@ -62,7 +62,7 @@ class VehicleDAOImpl(VehicleDAO):
                     for vehicle in records:
                         # if a vehicle exist wiht the specified plate then it creates the vehicle and return it
                         v = Vehicle(vehicle[0],vehicle[1],vehicle[2],vehicle[3],vehicle[4],vehicle[5],vehicle[6],
-                                          vehicle[7],vehicle[8],vehicle[9],vehicle[11],vehicle[12],vehicle[13],vehicle[10])
+                                          vehicle[7],vehicle[8],vehicle[9],vehicle[10],vehicle[11],vehicle[12],vehicle[13])
                         vehicles.append(v)
                     return vehicles
                 else:

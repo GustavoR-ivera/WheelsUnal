@@ -5,7 +5,7 @@ class Ride:
 
     #constructor
     def __init__(self, ride_id=None, creator_id=None, created_at=datetime.now(), updated_at=datetime.now(),
-                 deleted_at=None, pickup_location=None, destination=None, space_available=None, departure_date = None,
+                 deleted_at=None, pickup_location=None, destination=None, space_available=0, departure_date = None,
                  charge = None, vehicle_id=None, ride_available=1, description=None):
         # user attributes
         self._ride_id = ride_id

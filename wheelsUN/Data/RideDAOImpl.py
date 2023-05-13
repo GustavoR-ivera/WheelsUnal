@@ -13,7 +13,8 @@ class RideDAOImpl(RideDAO):
                 rides = []
                 query = f"SELECT * " \
                         f"FROM rides " \
-                        f"WHERE ride_available = '{status}' "
+                        f"WHERE ride_available = '{status}' " \
+                        f"order by created_at desc "
                 cursor.execute(query)
                 records = cursor.fetchall()
                 #print(f'records: {cursor.rowcount}')
@@ -52,8 +53,8 @@ class RideDAOImpl(RideDAO):
                         f"pickup_location, destination, space_available, departure_date, charge, vehicle_id, " \
                         f"ride_available, description) " \
                         f"values ({ride._creator_id},'{ride._created_at}','{ride._updated_at}'," \
-                        f"'{ride._pickup_location}', '{ride._destination}', {ride._space_available}, " \
-                        f"'{ride._departure_date}', '{ride._charge}', {ride._vehicle_id}, {ride._ride_available}," \
+                        f"'{ride._pickup_location}','{ride._destination}',{ride._space_available}, " \
+                        f"'{ride._departure_date}','{ride._charge}', {ride._vehicle_id}, {ride._ride_available}," \
                         f"'{ride._description}' )"
                 cursor.execute(query)
                 return cursor.rowcount

@@ -1,6 +1,5 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-
 from Data.Ride import Ride
 from Data.RideDAOImpl import RideDAOImpl
 from Data.User import User
@@ -10,6 +9,7 @@ from Data.Vehicle import Vehicle
 
 
 class NewRide(tk.Tk):
+
     def __init__(self, active_user: User):
         super().__init__()
         #initialize active user
@@ -28,7 +28,10 @@ class NewRide(tk.Tk):
         # 1. grid configuration
         self.columnconfigure(0, weight=10)
         self.columnconfigure(1, weight=10)
+
         self.components()
+
+
 
     def components(self):
         appName = tk.Label(self, text='Wheels UN')
@@ -78,9 +81,9 @@ class NewRide(tk.Tk):
         vehiclesLabel.grid(row=7, column=0, sticky='E')
 
         # Crea la lista desplegable
-        self.selected_option = tk.StringVar()
         user_vehicle_details=self.getVehicles()
         #options = ["color, placa, dd"]
+        self.selected_option = tk.StringVar(self, value='default')
         vehiclesList = ttk.Combobox(self, textvariable=self.selected_option, values=user_vehicle_details, state="readonly")
         vehiclesList.grid(row=7, column=1, sticky='WE', padx=10, pady=15)
 
@@ -94,6 +97,7 @@ class NewRide(tk.Tk):
         btnCreate = ttk.Button(self, text='Create', command=self.createNewRide)
         # especify cell's coordinates
         btnCreate.grid(row=10, column=0, sticky='NSWE', padx=50, pady= 10)
+
         btnCancel = ttk.Button(self, text='Cancel', command=self.cancel)
         # especify cell's coordinates
         btnCancel.grid(row=10, column=1, sticky='NSWE', padx=50, pady= 10)
@@ -103,7 +107,9 @@ class NewRide(tk.Tk):
         # create a ride object and capture data from the form fields
         #get the vehicle id with the vehicle plate
         list_vehicle_details = self.selected_option.get().split(',')
+        print(list_vehicle_details)
         vehicle_plate = list_vehicle_details[len(list_vehicle_details)-1]
+        print(vehicle_plate)
         v = VehicleDAOImpl()
         selected_vehicle = v.getVehicleByPlate(vehicle_plate)
         if isinstance(selected_vehicle, Vehicle):
@@ -115,8 +121,9 @@ class NewRide(tk.Tk):
             #print(self.selected_option.get(), self.descriptionText.get("1.0", tk.END))
             rideDAO = RideDAOImpl()
             if rideDAO.insert(r):
-                messagebox.showinfo("Informative","Ride created successfully")
+                messagebox.showinfo("Informative", "Ride created successfully")
                 self.cancel()
+
         else:
             self.pickupLocationEntry.delete(0, tk.END)
             self.destinationEntry.delete(0, tk.END)
@@ -137,12 +144,12 @@ class NewRide(tk.Tk):
             details = f"{vehicle.type},{vehicle.brand},{vehicle.color},{vehicle.vehicle_plate}"
             vehicle_details.append(details)
         # getVehicles()
+        print(vehicle_details)
         return vehicle_details
 
     def cancel(self):
         self.quit()
         self.destroy()
-
 
 if __name__ == '__main__':
     u = User()
