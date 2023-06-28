@@ -138,7 +138,7 @@ class NewRide(tk.Tk):
                 self.selected_option.set('select a vehicle')
                 #successful ride creation
                 messagebox.showinfo("Informative", "Ride created successfully")
-                self.pwindow.updateFeedback()
+                #self.pwindow.updateFeedback()
 
         else:
             self.pickupLocationEntry.delete(0, tk.END)
@@ -173,8 +173,11 @@ class NewRide(tk.Tk):
         # close current window
         self.quit()
         self.destroy()
+        # open a new window home
+        w = WindowHome(self.active_user)
+        w.mainloop()
         #update principal window
-        self.pwindow.updateFeedback()
+        #self.pwindow.updateFeedback()
 
 if __name__ == '__main__':
     u = User()

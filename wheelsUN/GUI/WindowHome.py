@@ -122,8 +122,8 @@ class WindowHome(tk.Tk):
 
     def newRide(self):
         #close current window
-        # self.quit()
-        # self.destroy()
+        self.quit()
+        self.destroy()
         #open new window form
         n = NewRide(self.active_user, self)
         n.mainloop()
