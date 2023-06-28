@@ -6,6 +6,85 @@ from Data.RideDAO import RideDAO
 
 class RideDAOImpl(RideDAO):
 
+    def validateUserRides(self,user_id,ride_id):
+        try:
+            with PoolCursor() as cursor:
+                query = f"select * from user_rides where user_id = {user_id} and ride_id={ride_id}"
+                cursor.execute(query)
+                record = cursor.fetchall()
+                if record:
+                    # the user currently is vinculated with the ride
+                    return 1
+                else:
+                    return 0
+        except Exception as e:
+            print(f'An exception has occurred: {e}')
+
+    def joinRide(self,ride_id, user_id):
+        #
+        try:
+            with PoolCursor() as cursor:
+                self.updateTrips()
+                query = f"select ride_available from rides where ride_id = {ride_id}"
+                cursor.execute(query)
+                record = cursor.fetchone()
+                query2 = f"select * from user_rides where user_id = {user_id} and ride_id={ride_id}"
+                cursor.execute(query2)
+                record2 = cursor.fetchall()
+                if record[0]==0 or len(record2)!=0:
+                    # ride is not available or the user currently is vinculated with the ride
+                    return 0
+                else:
+                    # means the ride is available
+                    query = f"update rides set space_available = space_available - 1 where ride_id = {ride_id}"
+                    cursor.execute(query)
+                    query = f"insert into user_rides (user_id, ride_id) values ({user_id}, {ride_id})"
+                    cursor.execute(query)
+                    self.updateTrips()
+                    return 1
+        except Exception as e:
+            print(f'An exception has occurred: {e}')
+
+    def exitRide(self,ride_id, user_id):
+        #
+        try:
+            with PoolCursor() as cursor:
+                #update the trips
+                self.updateTrips()
+                #consult it the ride is available
+                query = f"select ride_available from rides where ride_id = {ride_id}"
+                cursor.execute(query)
+                record = cursor.fetchone()
+                if record[0]==1:
+                    # means the ride is available
+                    query = f"update rides set space_available = space_available + 1 where ride_id = {ride_id}"
+                    cursor.execute(query)
+                    query = f"delete from user_rides where user_id = {user_id} and ride_id = {ride_id} "
+                    cursor.execute(query)
+                    self.updateTrips()
+                    return 1
+                else:
+                    return 0
+
+        except Exception as e:
+            print(f'An exception has occurred: {e}')
+
+
+    def updateTrips(self):
+        #return a user list with the user status specified
+        try:
+            with PoolCursor() as cursor:
+                #space available == 0 and departure date < current date
+                query = f"update rides " \
+                        f"set ride_available = 0 " \
+                        f"WHERE space_available = 0 or departure_date < current_timestamp"
+                cursor.execute(query)
+                #print(f'records: {cursor.rowcount}')
+                #print(records)
+        except Exception as e:
+            print(f'An exception has occurred: {e}')
+
+
     def getRidesByStatus(self, status):
         #return a user list with the user status specified
         try:
@@ -90,17 +169,17 @@ class RideDAOImpl(RideDAO):
 
     def update(self, ride):
         pass
-        # try:
-        #     with PoolCursor() as cursor:
-        #         query = f"update test_users " \
-        #                 f"set user_id = {user.user_id}, user_name = '{user.user_name}', " \
-        #                 f"password = '{user.password}', user_status = {user.user_status}, " \
-        #                 f"country = '{user.country}', dni_type = '{user.dni_type}', dni_number = '{user.dni_number}' " \
-        #                 f"where user_id = {user.user_id} "
-        #         cursor.execute(query)
-        #         print(f'updated records: {cursor.rowcount}')
-        # except Exception as e:
-        #     print(f'An exception has occurred: {e}')
+        try:
+            with PoolCursor() as cursor:
+                query = f"update rides " \
+                        f"set pickup_location = '{ride._pickup_location}', destination = '{ride._destination}', " \
+                        f"departure_date = '{ride._departure_date}', charge = '{ride._charge}', " \
+                        f"vehicle_id = {ride._vehicle_id}, description = '{ride._description}'" \
+                        f"where ride_id = {ride._ride_id} "
+                cursor.execute(query)
+                return cursor.rowcount
+        except Exception as e:
+            print(f'An exception has occurred: {e}')
 
 
 if __name__ == "__main__":

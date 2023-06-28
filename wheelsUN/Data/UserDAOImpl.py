@@ -67,7 +67,15 @@ class UserDAOImpl(UserDAO):
                         f"WHERE dni_number = '{dni_number}' "
                 cursor.execute(query)
                 record = cursor.fetchone()
-                print(f'user: {record}')
+                if record:
+                    # if a user exist wiht the specified dni then it creates the user and return it
+                    user = User(record[0], record[1], record[2], record[3], record[4], record[5], record[6], record[7],
+                                record[8], record[9], record[10], record[11], record[12], record[13], record[14],
+                                record[15])
+                    return user
+                else:
+                    # if not then return none
+                    return None
         except Exception as e:
             print(f'An exception has occurred: {e}')
 
@@ -82,7 +90,7 @@ class UserDAOImpl(UserDAO):
                         f"'{user.lastLogin}', '{user.phoneNumber}', {user.deleted}, '{user.created_at}'," \
                         f"'{user.updated_at}', '{user.drivingLicense}', '{user.rol}' )"
                 cursor.execute(query)
-                print(f'inserted records: {cursor.rowcount}')
+                #print(f'inserted records: {cursor.rowcount}')
         except Exception as e:
             print(f'An exception has occurred: {e}')
 

@@ -104,9 +104,12 @@ class WindowSignUp(tk.Tk):
             # informative message
             messagebox.showinfo('informative', 'Successful registration')
             # redirect to home window
+            u = UserDAOImpl()
+            userRegistered = u.getUserByDni(self.dniNumberEntry.get())
             self.destroy()
-            w = WindowHome()
+            w = WindowHome(userRegistered)
             w.mainloop()
+
         else:
             # delete text field content
             self.emailEntry.delete(0, tk.END)

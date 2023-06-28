@@ -10,6 +10,7 @@ from Data.UserDAOImpl import UserDAOImpl
 from Data.VehicleDAOImpl import VehicleDAOImpl
 from GUI.Card import Card
 from GUI.NewRide import NewRide
+from GUI.NewVehicle import NewVehicle
 
 
 class WindowHome(tk.Tk):
@@ -42,15 +43,17 @@ class WindowHome(tk.Tk):
         self.components()
         self.create_menu()
 
-
-
     #get
     @property
     def active_user(self):
         return self._active_user
 
     def components(self):
-        #menu
+        self.updateFeedbackBtn = ttk.Button(self, text='Update feedback', command=self.updateFeedback)
+        # especify cell's coordinates
+        self.updateFeedbackBtn.pack()
+        #updateFeedbackBtn.grid(row=0, column=0, sticky='NSWE', padx=10, pady= 10)
+
         # Crear un objeto Canvas que contenga el widget que queremos desplazar
         self.canvas = tk.Canvas(self)
         self.canvas.pack(side="left", fill="both", expand=True)
@@ -61,24 +64,21 @@ class WindowHome(tk.Tk):
 
         # look for available trips and insert them to the frame and show them
         #execute directly the method fetchall data from user_rides
-        #self.availableTrips()
-
-        #use the after method to get availabletrips
-        self.after(0, self.availableTrips)
+        self.availableTrips()
 
         # Configurar la barra de desplazamiento vertical
-        scrollbar = tk.Scrollbar(self, orient="vertical", command=self.canvas.yview)
-        scrollbar.pack(side="right", fill="y")
+        self.scrollbar = tk.Scrollbar(self, orient="vertical", command=self.canvas.yview)
+        self.scrollbar.pack(side="right", fill="y")
 
-        scrollbar.config(command=self.canvas.yview)
-        self.canvas.config(yscrollcommand=scrollbar.set)
+        self.scrollbar.config(command=self.canvas.yview)
+        self.canvas.config(yscrollcommand=self.scrollbar.set)
 
         #canvas.config(yscrollcommand=scrollbar.set)
         # Agregar el objeto Frame al Canvas
         self.canvas.create_window((0, 0), window=self.frame, anchor="nw")
         # Ajustar el tamaño del Canvas para que se adapte al contenido
         self.frame.update_idletasks()
-        self.canvas.config(scrollregion=self.canvas.bbox("all"))
+        self.canvas.bind("<Configure>", lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
 
     def create_menu(self):
         #create de principal menu
@@ -90,6 +90,10 @@ class WindowHome(tk.Tk):
         submenu_trips.add_separator()
         submenu_trips.add_command(label='Created trips',command=self.newRide)
         submenu_trips.add_command(label='Scheduled trips', command=self.newRide)
+        # =========================create submenu=========================
+        submenu_vehicles = tk.Menu(principal_menu, tearoff=False)
+        submenu_vehicles.add_command(label='Register vehicle', command=self.newVehicle)
+        submenu_vehicles.add_command(label='My vehicles', command=self.myVehicles)
         #=========================create submenu=========================
         submenu_reports = tk.Menu(principal_menu, tearoff=False)
         #add item to submenu
@@ -104,6 +108,7 @@ class WindowHome(tk.Tk):
         submenu_options.add_command(label='Exit', command=self.exit_app)
         # add new seccions into the principal menu=========================
         principal_menu.add_cascade(menu=submenu_trips, label='My trips')
+        principal_menu.add_cascade(menu=submenu_vehicles, label='Vehicles')
         principal_menu.add_cascade(menu=submenu_reports, label='Reports')
         principal_menu.add_cascade(menu=submenu_options, label='Options')
         self.config(menu=principal_menu)
@@ -116,15 +121,43 @@ class WindowHome(tk.Tk):
         sys.exit()
 
     def newRide(self):
-        #self.quit()
-        #self.hilo1.join()
-        n = NewRide(self.active_user)
+        #close current window
+        # self.quit()
+        # self.destroy()
+        #open new window form
+        n = NewRide(self.active_user, self)
         n.mainloop()
 
+    def newVehicle(self):
+        # open new window form
+        n = NewVehicle(self.active_user)
+        n.mainloop()
+
+    def myVehicles(self):
+        pass
+
+    def updateFeedback(self):
+        #Obtener una lista de todos los widgets dentro del frame
+        widgets = self.frame.winfo_children()
+        # Eliminar cada widget del frame
+        for widget in widgets:
+            widget.destroy()
+
+        # Ajustar el tamaño del Canvas para que se adapte al contenido
+        self.frame.update_idletasks()
+        self.canvas.bind("<Configure>", lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
+
+        self.availableTrips()
+        # self.scrollbar.destroy()
+        # self.frame.destroy()
+        # self.canvas.destroy()
+        # self.updateFeedbackBtn.destroy()
+        # #create all again
+        # self.components()
+        #
+
+
     def availableTrips(self):
-        self.clear_widgets()
-        #dejar solo una funcion para traer los viajes
-        #quitar cards previas antes de traer nuevos viajes
         userDAO = UserDAOImpl()
         vehicleDAO = VehicleDAOImpl()
         a = AvailableTrips()
@@ -137,30 +170,19 @@ class WindowHome(tk.Tk):
             user_ride_creator = userDAO.getUserById(ride._creator_id)
             # compare if the ride creator is equal to the active_user
             if user_ride_creator.user_id == self.active_user.user_id:
-                Card(self.frame, user_ride_creator.user_name, ride._created_at, ride._pickup_location,
-                     ride._destination, ride._departure_date, ride._charge,
-                     ride._space_available, v.brand, v.color, v.vehicle_plate, user_ride_creator.phoneNumber,
-                     ride._description, True)
+                match_user = True
             else:
-                Card(self.frame, user_ride_creator.user_name, ride._created_at, ride._pickup_location,
-                     ride._destination, ride._departure_date, ride._charge,
-                     ride._space_available, v.brand, v.color, v.vehicle_plate, user_ride_creator.phoneNumber,
-                     ride._description, False)
+                match_user = False
 
-        self.frame.update_idletasks()
-        self.canvas.update_idletasks()
-        self.after(60000, self.availableTrips)
-
-    # Función para limpiar todos los widgets del frame
-    def clear_widgets(self):
-        for widget in self.frame.winfo_children():
-            widget.destroy()
-
+            Card(self.frame, self ,user_ride_creator.user_name, ride._created_at, ride._pickup_location,
+                 ride._destination, ride._departure_date, ride._charge,
+                 ride._space_available, v.brand, v.color, v.vehicle_plate, user_ride_creator.phoneNumber,
+                 ride._description, match_user, ride._ride_id, self.active_user.user_id)
 
 
 if __name__ == '__main__':
     u = User()
     userdao = UserDAOImpl()
-    alexa = userdao.getUserById(25)
+    alexa = userdao.getUserById(27)
     w = WindowHome(alexa)
     w.mainloop()
