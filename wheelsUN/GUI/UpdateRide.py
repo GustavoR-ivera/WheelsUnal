@@ -1,7 +1,10 @@
 import tkinter
+from datetime import datetime
 from tkinter import messagebox
 from Data.Ride import Ride
 from Data.RideDAOImpl import RideDAOImpl
+from Data.RideEventRegister import RideEventRegister
+from Data.RideEventRegisterDAOImpl import RideEventRegisterDAOImpl
 from Data.User import User
 from Data.VehicleDAOImpl import VehicleDAOImpl
 from GUI.NewRide import NewRide
@@ -20,6 +23,9 @@ class UpdateRide(NewRide):
         self.getRideInformation()
 
     def update(self):
+
+        #corregir la seleccion del vehiculo
+
         #get the current ride object
         r = RideDAOImpl()
         currentRide = r.getRideById(self.ride_id)
@@ -43,11 +49,29 @@ class UpdateRide(NewRide):
         #update db with the new data
         rideDAO = RideDAOImpl()
         if rideDAO.update(currentRide):
-            messagebox.showinfo("Informative", "Ride updated successfully")
-            self.pwindow.updateFeedback()
-            self.quit()
-            self.destroy()
-            #self.cancel()
+
+            # record event
+            # create event description
+            event_description = f"the user with id: {self.active_user.user_id} ({self.active_user.user_name})" \
+                                f" updated the ride with id: {currentRide._ride_id}"
+            event = RideEventRegister(currentRide._ride_id, self.active_user.user_id, event_description, datetime.now())
+            eventDAO = RideEventRegisterDAOImpl()
+            # insert record
+            if eventDAO.insert(event):
+                messagebox.showinfo("Informative", "Ride updated successfully")
+
+                #self.pwindow.updateFeedback()
+                from GUI.WindowHome import WindowHome
+                # close current window
+                self.quit()
+                self.destroy()
+                # open a new window home
+                w = WindowHome(self.active_user)
+                w.mainloop()
+                # update principal window
+                # self.pwindow.updateFeedback()
+
+        #self.cancel()
         else:
             messagebox.showinfo("Informative", "Ride can't be updated, try again")
 

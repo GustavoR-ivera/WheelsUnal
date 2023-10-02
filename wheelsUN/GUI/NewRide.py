@@ -2,10 +2,14 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from Data.Ride import Ride
 from Data.RideDAOImpl import RideDAOImpl
+from Data.RideEventRegister import RideEventRegister
+from Data.RideEventRegisterDAOImpl import RideEventRegisterDAOImpl
 from Data.User import User
 from Data.UserDAOImpl import UserDAOImpl
 from Data.VehicleDAOImpl import VehicleDAOImpl
 from Data.Vehicle import Vehicle
+from datetime import datetime
+
 
 
 
@@ -137,8 +141,20 @@ class NewRide(tk.Tk):
                 self.descriptionText.delete(1.0, tk.END)
                 self.selected_option.set('select a vehicle')
                 #successful ride creation
-                messagebox.showinfo("Informative", "Ride created successfully")
                 #self.pwindow.updateFeedback()
+
+
+                # record event
+                #capture last ride for the current user
+                lastRide = rideDAO.getLastRideCreatedByUser(self.active_user)
+                #create event description
+                event_description = f"the user with id: {self.active_user.user_id} ({self.active_user.user_name})" \
+                                    f" created the ride with id: {lastRide._ride_id}"
+                event = RideEventRegister(lastRide._ride_id, self.active_user.user_id, event_description, datetime.now())
+                eventDAO = RideEventRegisterDAOImpl()
+                #insert record
+                if eventDAO.insert(event):
+                    messagebox.showinfo("Informative", "Ride created successfully")
 
         else:
             self.pickupLocationEntry.delete(0, tk.END)

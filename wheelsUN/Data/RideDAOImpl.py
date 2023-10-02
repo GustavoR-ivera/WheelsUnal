@@ -125,6 +125,28 @@ class RideDAOImpl(RideDAO):
         except Exception as e:
             print(f'An exception has occurred: {e}')
 
+    def getLastRideCreatedByUser(self, user):
+        try:
+            with PoolCursor() as cursor:
+                query = f"SELECT * " \
+                        f"FROM rides " \
+                        f"WHERE creator_id = '{user.user_id}' " \
+                        f"ORDER BY updated_at DESC"
+                cursor.execute(query)
+                #ONLY CAPTURE THE FIRTS RECORD
+                record = cursor.fetchone()
+            # if record variable is not empty then it creates a ride object and then it returns it
+            if record:
+                ride = Ride(record[0], record[1], record[2], record[3], record[4], record[5], record[6], record[7],
+                            record[8],
+                            record[9], record[10], record[11], record[12])
+                return ride
+            # if record variable is empty then it returns 0/false
+            else:
+                return None
+        except Exception as e:
+            print(f'An exception has occurred: {e}')
+
     def insert(self, ride):
         try:
             with PoolCursor() as cursor:

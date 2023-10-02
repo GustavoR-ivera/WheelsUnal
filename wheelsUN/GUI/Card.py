@@ -148,6 +148,10 @@ class Card(tk.LabelFrame):
             self.destroy()
 
     def update_ride(self):
+        # close current window
+        ventana_actual = self.winfo_toplevel()  # Obtenemos la ventana actual
+        ventana_actual.destroy()
+
         userDAO = UserDAOImpl()
         active_user = userDAO.getUserById(self.user_id)
         n = UpdateRide(active_user, self.ride_id, self.pwindow)
