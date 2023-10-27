@@ -3,6 +3,9 @@ import tkinter as tk
 #
 #from GUI.WindowHome import WindowHome
 from tkinter import ttk, messagebox
+
+import tkintermapview
+
 from Data.RideDAOImpl import RideDAOImpl
 from Data.UserDAOImpl import UserDAOImpl
 from GUI.NewRide import NewRide
@@ -103,9 +106,10 @@ class Card(tk.LabelFrame):
         #compare if the ride creator is equal to the active_user
         #if match user == true then there was a coincidence in the users
         if(self._match_user):
-            seccion4 = tk.LabelFrame(self, text='acctions')
+            seccion4 = tk.LabelFrame(self, text='actions')
             seccion4.columnconfigure(0, weight=1)
             seccion4.columnconfigure(1, weight=1)
+            seccion4.columnconfigure(2, weight=1)
             # location on home window
             seccion4.grid(row=3, column=0, columnspan=2, sticky='NSWE')
             # crete components for labelFrame
@@ -113,29 +117,42 @@ class Card(tk.LabelFrame):
             delete_btn.grid(row=0, column=0, sticky='NSWE', padx=20)
             update_btn = ttk.Button(seccion4, text='update', command=self.update_ride)
             update_btn.grid(row=0, column=1, sticky='NSWE', padx=20)
+            visualize_map_btn = ttk.Button(seccion4, text='view map', command=self.visualize_map)
+            visualize_map_btn.grid(row=0, column=2, sticky='NSWE', padx=20)
         else:
             #if the user is already enrolled with the ride then the system allows him to exit
             r = RideDAOImpl()
             value = r.validateUserRides(self.user_id, self.ride_id)
             if value:
-                seccion4 = tk.LabelFrame(self, text='acctions')
+                seccion4 = tk.LabelFrame(self, text='actions')
                 seccion4.columnconfigure(0, weight=1)
                 seccion4.columnconfigure(1, weight=1)
                 # location on home window
                 seccion4.grid(row=3, column=0, columnspan=2, sticky='NSWE')
                 # crete components for labelFrame
                 self.action_btn = ttk.Button(seccion4, text='exit ride', command=self.exit_ride)
-                self.action_btn.grid(row=0, column=0, columnspan=2, sticky='NSWE', padx=100)
+                self.action_btn.grid(row=0, column=0, sticky='NSWE', padx=100)
+                visualize_map_btn = ttk.Button(seccion4, text='visualize map', command=self.visualize_map)
+                visualize_map_btn.grid(row=0, column=1, sticky='NSWE', padx=20)
             #if the user is not in the ride, then he can join it
             else:
-                seccion4 = tk.LabelFrame(self, text='acctions')
+                seccion4 = tk.LabelFrame(self, text='actions')
                 seccion4.columnconfigure(0, weight=1)
                 seccion4.columnconfigure(1, weight=1)
                 # location on home window
                 seccion4.grid(row=3, column=0, columnspan=2, sticky='NSWE')
                 # crete components for labelFrame
                 self.action_btn = ttk.Button(seccion4, text='join', command=self.join_ride)
-                self.action_btn.grid(row=0, column=0, columnspan=2, sticky='NSWE', padx=100)
+                self.action_btn.grid(row=0, column=0, sticky='NSWE', padx=100)
+                visualize_map_btn = ttk.Button(seccion4, text='visualize map', command=self.visualize_map)
+                visualize_map_btn.grid(row=0, column=1, sticky='NSWE', padx=20)
+
+    def visualize_map(self):
+
+        #show a visualization of the route for the ride
+        from GUI.Map import Map
+        m = Map(self.user_name, self.departure_date, self.pickup_location, self.destination)
+
 
     def delete_ride(self):
         value = messagebox.askyesno(message="Do you wanna continue?", title="Delete ride")
@@ -144,7 +161,7 @@ class Card(tk.LabelFrame):
             r = RideDAOImpl()
             currentRide = r.getRideById(self.ride_id)
             r.delete(currentRide)
-            #delete card in the home window
+            #delete card visualization in the home window
             self.destroy()
 
     def update_ride(self):
@@ -177,12 +194,14 @@ class Card(tk.LabelFrame):
         else:
             messagebox.showinfo("Info", "sorry, this ride is not available or you are already inside")
 
-# if __name__ == '__main__':
-#     w = WindowHome()
-#     c = Card(w, 'Fiu', '06/05/2023 14:37', 'Santa Rosita', 'Universidad Nal', '07/05/2023 10:00', '3500 COP', '5', 'nissan',
-#              'Verde', 'FGR-443', '', 'descripcion...')
-#     c2 = Card(w, 'Fiu', '06/05/2023 14:37', 'Suba', 'Engativa', '07/05/2023 10:00', '2000 COP', '5', 'nissan',
-#              'Verde', 'FGR-443', '', 'descripcion...')
-#     c3 = Card(w, 'Fiu', '06/05/2023 14:37', 'Kennedy', 'Rosales', '07/05/2023 10:00', '4500 COP', '5', 'nissan',
-#              'Verde', 'FGR-443', '3223877590', 'descripcion...')
-#     w.mainloop()
+
+if __name__ == '__main__':
+    from Data.User import User
+    from GUI.WindowHome import WindowHome
+    u = User()
+    userdao = UserDAOImpl()
+    alexa = userdao.getUserById(25)
+    w = WindowHome(alexa)
+    #c = Card(master=w)
+
+    w.mainloop()

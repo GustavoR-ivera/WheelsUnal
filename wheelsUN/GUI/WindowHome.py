@@ -3,12 +3,13 @@ import threading
 import time
 import tkinter as tk
 from tkinter import ttk, messagebox
-
+import tkintermapview
 from BusinessLogic.AvailableTrips import AvailableTrips
 from Data.User import User
 from Data.UserDAOImpl import UserDAOImpl
 from Data.VehicleDAOImpl import VehicleDAOImpl
 from GUI.Card import Card
+from GUI.NewReport import NewReport
 from GUI.NewRide import NewRide
 from GUI.NewVehicle import NewVehicle
 
@@ -78,6 +79,9 @@ class WindowHome(tk.Tk):
         self.canvas.create_window((0, 0), window=self.frame, anchor="nw")
         # Ajustar el tamaño del Canvas para que se adapte al contenido
         self.frame.update_idletasks()
+        # Configurar desplazamiento con el mouse en el lienzo
+        self.canvas.bind_all("<MouseWheel>",
+                              lambda event: self.canvas.yview_scroll(-1 * (event.delta // 120), "units"))
         self.canvas.bind("<Configure>", lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
 
     def create_menu(self):
@@ -99,7 +103,7 @@ class WindowHome(tk.Tk):
         #add item to submenu
         submenu_reports.add_command(label='History trips')
         submenu_reports.add_separator()
-        submenu_reports.add_command(label='Generate report')
+        submenu_reports.add_command(label='Generate report', command=self.makeReport)
         #=========================create submenu=========================
         submenu_options = tk.Menu(principal_menu, tearoff=False)
         # add item to submenu
@@ -135,6 +139,10 @@ class WindowHome(tk.Tk):
 
     def myVehicles(self):
         pass
+
+    def makeReport(self):
+        n = NewReport(self.active_user)
+        n.mainloop()
 
     def updateFeedback(self):
         #Obtener una lista de todos los widgets dentro del frame
