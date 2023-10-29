@@ -48,7 +48,8 @@ class Card(tk.LabelFrame):
         self.columnconfigure(0, weight=10)
         self.columnconfigure(1, weight=10)
         # location on home window
-        self.grid(row=self.row, column=1, columnspan=4, sticky='NSWE', padx=150, pady=10)
+        x = self.winfo_screenwidth()/2 - 300
+        self.grid(row=self.row, column=1, columnspan=4, sticky='NSWE', padx=x, pady=10)
         # card components
         # ====================seccion 1 creation========================
         seccion1 = tk.LabelFrame(self, text='ride organizer')

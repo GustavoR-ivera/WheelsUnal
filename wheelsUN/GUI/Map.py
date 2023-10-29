@@ -85,11 +85,11 @@ class Map():
         except Exception as e:
             print("locations not available",e)
 
-        try:
-            # set the specified points into the map
-            map_widget.fit_bounding_box((marker_1.position), (marker_2.position))
-        except Exception as e:
-            print("fit bounding failed", e)
+        # try:
+        #     # set the specified points into the map
+        #     map_widget.fit_bounding_box((marker_1.position), (marker_2.position))
+        # except Exception as e:
+        #     print("fit bounding failed", e)
 
         # locate the map on the window
         map_widget.grid(row=0, column=1, sticky='E', padx=5, pady=5)
