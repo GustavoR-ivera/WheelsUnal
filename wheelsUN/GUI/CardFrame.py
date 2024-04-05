@@ -41,7 +41,7 @@ class CardFrame(tk.LabelFrame):
                 self.frameScrollbar.grid(row=0, column=7,  sticky="nsew")
                 #self.frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-                # look for available trips and insert them to the frame and show them
+                # look for available trips and insert them into the frame and show them
                 #execute directly the method fetchall data from user_rides
                 self.availableTrips()
 

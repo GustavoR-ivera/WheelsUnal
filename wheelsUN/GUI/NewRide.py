@@ -44,7 +44,7 @@ class NewRide(tk.LabelFrame):
     def components(self):
         if(self.getVehicles()):
             #create a label frame for the form
-            self.formFrame = ttk.LabelFrame(self, text="form")
+            self.formFrame = ttk.LabelFrame(self, text="form", border=2)
             # 2 columns
             self.formFrame.columnconfigure(0, weight=1)
             self.formFrame.columnconfigure(1, weight=1)

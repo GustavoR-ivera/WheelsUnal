@@ -53,6 +53,11 @@ class WindowHome(tk.Tk):
         self.add_shortcuts()
         self.frameList()
         self.footer()
+        #self.thread_update_cards()
+        # Crear hilos para el servidor y el cliente
+        self.update_cards_thread = threading.Thread(target=self.thread_update_cards)
+        # Iniciar los hilos
+        self.update_cards_thread.start()
 
     #get
     @property
@@ -155,7 +160,8 @@ class WindowHome(tk.Tk):
 
     def exit_app(self):
         #finish threat
-        #self.hilo1.join()
+        self.update_cards_thread.join()
+
         self.quit()
         self.destroy()
         sys.exit()
@@ -193,23 +199,32 @@ class WindowHome(tk.Tk):
         n.mainloop()
 
     def updateFeedback(self):
-        # #Obtener una lista de todos los widgets dentro del frame
-        # widgets = self.frame.winfo_children()
+        # #Obtener una lista de todos los widgets dentro del CardFrame
+        cardframe = self.list.head.data
+        cardFrameWidgets = cardframe.winfo_children()
+        #canvas is the first object into CardFrame index 0, (index 1 scrollbar)
+        canvas=cardFrameWidgets[0]
+        #get the widgets into canvas
+        canvasWidgets = canvas.winfo_children()
+        #frame scrollbar where the card objects are
+        frameScrollbar=canvasWidgets[0]
+        #get widgets into the frameScrollbar -> Cards
+        frameScrollbarWidgets=frameScrollbar.winfo_children()
+
         # # Eliminar cada widget del frame
-        # for widget in widgets:
-        #     widget.destroy()
-        #
+        for widget in frameScrollbarWidgets:
+            #if widget is a card object then delete it
+            if isinstance(widget, Card):
+                #print(widget.user_name)
+                widget.destroy()
+        #get the new rides (update)
+        cardframe.availableTrips()
         # # Ajustar el tamaño del Canvas para que se adapte al contenido
-        # self.frame.update_idletasks()
-        # self.canvas.bind("<Configure>", lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
-        #
-        # self.availableTrips()
-        # # self.scrollbar.destroy()
-        # # self.frame.destroy()
-        # # self.canvas.destroy()
-        # # self.updateFeedbackBtn.destroy()
-        # # #create all again
-        # # self.components()
+        cardframe.frameScrollbar.update_idletasks()
+        # Configurar desplazamiento con el mouse en el lienzo
+        cardframe.canvas.bind_all("<MouseWheel>",
+                             lambda event: cardframe.canvas.yview_scroll(-1 * (event.delta // 120), "units"))
+        cardframe.canvas.bind("<Configure>", lambda e: cardframe.canvas.configure(scrollregion=self.canvas.bbox("all")))
 
         #notificar la accion realizada en la etiqueta comodin
         from datetime import datetime
@@ -220,6 +235,19 @@ class WindowHome(tk.Tk):
         # especify cell's coordinates
         #self.testbtn.pack(side="right")
         self.labelComodin.grid(row=0, column=0)
+
+
+    #method for create a thread that update the cards
+    def thread_update_cards(self):
+        while True:
+            time.sleep(10)
+            print("starting update cards")
+            time.sleep(10)
+            self.updateFeedback()
+            time.sleep(10)
+            print("finishing update cards")
+
+
 
 
 

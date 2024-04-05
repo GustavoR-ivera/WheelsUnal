@@ -1,5 +1,6 @@
 from abc import *
 
+
 # standard interface with crud operations
 class UserDAO(ABC):
 
